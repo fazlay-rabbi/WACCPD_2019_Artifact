@@ -1,0 +1,38 @@
+SpMM Mini App
+=============
+This app performs tiled sparse matrix matrix multiplicaiton (SpMM) operation 
+of the form: 
+        Y = A * X
+where A is n * n sparse matrix and X is a n * m dense matrix and the final
+output Y is a n * p dense matrix.
+
+This program reuires the sparse matrix A in CSR format and it essentially 
+tile the big sparse matrix into block of rows and performs the SpMM operation
+on each block. This program could be use to perfrom the tiled and unified memory 
+(by using proper compilation flag) version of the SpMM operation.
+
+Where did I test this program:
+==============================
+We have tested this app on NERSC CORI-GPU and Summit dev cluster. We used both pgi/19.5
+and cuda/10.0 modules for collecting data on NERSC.
+
+How to compile:
+==============
+1. Load the proper modules fist.
+2. To compile tiled version run the following command:
+        make spmm
+   this will give you executable named spmm.x in exe folder.
+2. To compile unified memory version run the following command:
+        make spmm_um
+   this will give you executable named spmm_um.x in exe folder.
+
+How to run:
+==========
+Both tiled and unified memory version takes same parameters as input. To run any
+version do the following:
+
+srun -n 1 -c 10 --cpu-bind=cores ./exe/spmm.x <# of RHS vector> <tile size> <path to sparse mtx>
+
+<# of RHS vector> : Lets vary it like this- 8, 12, 16, 24, 32, 48, 64
+<tile size> : Depends on your GPU memory. Make sure GPU memory is not overflown.
+<path to sparse mtx> : provide the path to the CSR formated sparse matrix.
