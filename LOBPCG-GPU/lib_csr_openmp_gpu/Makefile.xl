@@ -1,0 +1,24 @@
+CC=xlc++_r -DUSE_LAPACK
+CPPFLAGS=-Ofast -qsmp=omp:noauto -qarch=pwr9 -qtune=pwr9 -qoffload -qtgtarch=sm_70 -std=c++11
+EXEDIR=exe
+
+# Netlib symbols have an extra underscore. Use ESSL instead
+#INC= -I$(OLCF_NETLIB_LAPACK_ROOT)/include
+#LIB=-L$(OLCF_NETLIB_LAPACK_ROOT)/lib64 -llapacke -llapack -lcblas -lblas
+
+INC= -I$(OLCF_ESSL_ROOT)/include
+LIB=-L$(OLCF_ESSL_ROOT)/lib64 -lessl
+
+
+EXEDIR=exe
+
+CUFLAGS=-DUSE_CUBLAS -DUSE_OPENACC
+CFLAGS=-I${CUDA_ROOT}/include
+LIBS=-L${CUDA_ROOT}/lib64 -lcublas -lcudart -lcusparse
+
+gpu_v1:
+	$(CC) $(CPPFLAGS) $(CUFLAGS) $(CFLAGS) $(LIBS) $(INC) -c lib_csr.cpp -o $(EXEDIR)/lib_csr_openmp.o $(LIB)
+	$(CC) $(CPPFLAGS) $(CUFLAGS) $(CFLAGS) $(LIBS) $(INC) -c lobpcg_libcsr_GPU_v1_openmp.cpp -o $(EXEDIR)/lobpcg_libcsr_GPU_v1_openmp.o $(LIB)
+	$(CC) $(CPPFLAGS) $(CUFLAGS) $(CFLAGS) $(LIBS) $(INC) $(EXEDIR)/lib_csr_openmp.o $(EXEDIR)/lobpcg_libcsr_GPU_v1_openmp.o -o $(EXEDIR)/lobpcg_libcsr_GPU_v1_openmp.x $(LIB)
+clean:
+	rm -f $(EXEDIR)/*.x $(EXEDIR)/*.o 

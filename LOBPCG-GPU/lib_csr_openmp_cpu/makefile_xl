@@ -1,0 +1,13 @@
+CC=xlc++_r
+CPPFLAGS=-DUSE_LAPACK -qsmp=omp:noauto -O3 -std=c++11
+INC= -I$(OLCF_ESSL_ROOT)/include
+LIB=-L$(OLCF_ESSL_ROOT)/lib64 -lessl
+EXEDIR=exe
+
+libcsr_v1:
+	$(CC) $(CPPFLAGS) -c lib_csr.cpp -o $(EXEDIR)/lib_csr_xl.o $(INC)
+	$(CC) $(CPPFLAGS) -c lobpcg_libcsr_vtune_v1.cpp -o $(EXEDIR)/lobpcg_libcsr_vtune_v1_xl.o $(INC)
+	$(CC) $(CPPFLAGS) $(EXEDIR)/lib_csr_xl.o $(EXEDIR)/lobpcg_libcsr_vtune_v1_xl.o -o $(EXEDIR)/lobpcg_libcsr_vtune_v1_xl.x $(LIB)
+
+clean:
+	rm -f $(EXEDIR)/*.x $(EXEDIR)/*.o

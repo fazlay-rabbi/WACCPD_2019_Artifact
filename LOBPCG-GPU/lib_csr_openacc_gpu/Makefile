@@ -1,0 +1,19 @@
+CC=pgc++
+MKL_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mkl
+CPPFLAGS=-acc -ta=tesla:cc70,cuda10.0 -std=c++11 -pgf90libs -L/usr/common/software/pgi/$PGI_VERSION/linux86-64/$PGI_VERSION/include
+EXEDIR=exe
+
+LINKER_DYNAMIC=-L/usr/common/software/pgi/$PGI_VERSION/linux86-64/$PGI_VERSION/lib -llapack -lblas
+
+CUFLAGS=-DUSE_CUBLAS -DUSE_OPENACC
+CFLAGS=-I${CUDA_ROOT}/include
+LIBS=-L${CUDA_ROOT}/lib64 -lcublas -lcudart -lcusparse
+
+
+gpu_v1:
+	$(CC) $(CPPFLAGS) $(CUFLAGS) $(CFLAGS) $(LIBS) -c lib_csr.cpp -o $(EXEDIR)/lib_csr_openacc.o $(LINKER_DYNAMIC)
+	$(CC) $(CPPFLAGS) $(CUFLAGS) $(CFLAGS) $(LIBS) -c lobpcg_libcsr_GPU_v1_openacc.cpp -o $(EXEDIR)/lobpcg_libcsr_GPU_v1_openacc.o $(LINKER_DYNAMIC)
+	$(CC) $(CPPFLAGS) $(CUFLAGS) $(CFLAGS) $(LIBS) $(EXEDIR)/lib_csr_openacc.o $(EXEDIR)/lobpcg_libcsr_GPU_v1_openacc.o -o $(EXEDIR)/lobpcg_libcsr_GPU_v1_openacc.x $(LINKER_DYNAMIC)
+
+clean:
+	rm $(EXEDIR)/*.x $(EXEDIR)/*.o 

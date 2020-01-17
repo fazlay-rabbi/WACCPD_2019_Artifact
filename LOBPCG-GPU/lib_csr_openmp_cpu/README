@@ -1,0 +1,18 @@
+Where did I test this program:
+=============================
+So far I have tested this app on NERSC CORI-GPU cluster. I used both PrgEnv-llvm/9.0.0-git_20190220_cuda_10.1.168
+and PrgEnv-intel/6.0.5 (to get the MKL LAPACK routines) for collecting data. It is running without any issue as of Aug 16, 2019.
+
+How to compile:
+==============
+1. To compile this program run the following command:
+    make libcsr_v1
+
+    this will give you lobpcg_libcsr_v1_clang_mkl.x executable in exe folder.
+
+How to run:
+===========
+1. To run this program do the following:
+    srun -n 1 -c 10 ./exe/lobpcg_libcsr_v1_clang_mkl.x <# of RHS vector> <path to sparse matrix>
+
+<# of RHS vector>: Lets vary this value like this - 4, 8, 12, 16 for each of the sparse matrix.

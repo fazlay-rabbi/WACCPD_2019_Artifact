@@ -1,0 +1,19 @@
+Where did I test this program:
+=============================
+So far I have tested this app on NERSC CORI-GPU cluster. I used both pgi/19.5
+and cuda/10.0 modules for collecting data. But it works with the default pgi
+and cuda modules as well as of Aug 16, 2019.
+
+How to compile:
+==============
+1. To compile this program run the following command:
+    make libcsr_v1
+
+    this will give you lobpcg_libcsr_v1_openacc.x executable in exe folder.
+
+How to run:
+===========
+1. To run this program do the following (to run with 10 threads):
+    srun -n 1 -c 10 ./exe/lobpcg_libcsr_v1_openacc.x <# of RHS vector> <path to CSR formated sparse matrix>
+
+<# of RHS vector>: Lets vary this value like this - 4, 8, 12, 16 for each of the sparse matrix.

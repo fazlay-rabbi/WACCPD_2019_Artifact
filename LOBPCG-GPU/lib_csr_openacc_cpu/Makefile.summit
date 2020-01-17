@@ -1,0 +1,14 @@
+CC=pgc++
+CPPFLAGS=-acc -ta=multicore -std=c++11 -pgf90libs
+EXEDIR=exe
+
+INC=-I$(OLCF_PGI_ROOT)/linuxpower/19.5/include
+LIBS=-L$(OLCF_PGI_ROOT)/linuxpower/19.5/lib -llapack -lblas
+
+libcsr_v1:
+	$(CC) $(CPPFLAGS) $(INC) -c lib_csr_openacc.cpp -o $(EXEDIR)/lib_csr_openacc_v1.o
+	$(CC) $(CPPFLAGS) $(INC) -c lobpcg_libcsr_vtune_v2_openacc.cpp -o $(EXEDIR)/lobpcg_libcsr_v1_openacc.o
+	$(CC) $(CPPFLAGS) $(LIBS) $(EXEDIR)/lib_csr_openacc_v1.o $(EXEDIR)/lobpcg_libcsr_v1_openacc.o -o $(EXEDIR)/lobpcg_libcsr_v1_openacc.x
+
+clean:
+	rm -f $(EXEDIR)/*.x $(EXEDIR)/*.o 

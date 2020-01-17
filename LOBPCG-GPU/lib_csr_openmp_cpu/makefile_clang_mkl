@@ -1,0 +1,14 @@
+CC=clang++ -DUSE_MKL
+MKL_ROOT=/global/common/cori/software/intel/compilers_and_libraries_2018.0.128/linux/mkl
+#MKL_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mkl
+CPPFLAGS=-fopenmp -O3 -std=c++11  -m64 -I${MKL_ROOT}/include
+EXEDIR=exe
+LINKER_DYNAMIC= -L${MKL_ROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+
+libcsr_v1:
+	$(CC) $(CPPFLAGS) -c lib_csr.cpp -o $(EXEDIR)/lib_csr_gnu.o $(LINKER_DYNAMIC)
+	$(CC) $(CPPFLAGS) -c lobpcg_libcsr_vtune_v1.cpp -o $(EXEDIR)/lobpcg_libcsr_vtune_v1_gnu.o $(LINKER_DYNAMIC)
+	$(CC) $(CPPFLAGS) $(EXEDIR)/lib_csr_gnu.o $(EXEDIR)/lobpcg_libcsr_vtune_v1_gnu.o -o $(EXEDIR)/lobpcg_libcsr_v1_clang_mkl.x $(LINKER_DYNAMIC)
+
+clean:
+	rm $(EXEDIR)/*.x $(EXEDIR)/*.o

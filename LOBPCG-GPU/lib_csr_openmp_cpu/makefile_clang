@@ -1,0 +1,23 @@
+CC=clang++
+MKL_ROOT=/opt/intel/compilers_and_libraries_2018.1.163/linux/mkl
+#CPPFLAGS=-fopenmp -O3 -std=c++11  -m64 -I${MKL_ROOT}/include
+CPPFLAGS=-fopenmp -O3 -std=c++11  -m64 -I${MKL_ROOT}/include
+EXEDIR=exe
+LINKER_INT32=-L${MKL_ROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+LINKER_INT32_STATIC=-Wl,--start-group $(MKL_ROOT)/lib/intel64/libmkl_intel_lp64.a $(MKL_ROOT)/lib/intel64/libmkl_gnu_thread.a $(MKL_ROOT)/lib/intel64/libmkl_core.a -Wl,--end-group -lgomp -lpthread -lm -ldl
+
+LINKER_DYNAMIC= -L${MKL_ROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp -lpthread -lm -ldl
+
+CPPFLAGS_HPCC_GNU= -L${MKL_ROOT}/lib/intel64 -m64 -I${MKL_ROOT}/include -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_core -lgomp  -lpthread -lm -ldl -O3 -fopenmp
+TAUCC=tau_cxx.sh -std=c++11 #-I${MKLROOT}/include
+
+MODULE_REQUIED:
+	module load gcc
+	module load llvm/3.8.0	
+libcsr_v1:
+	$(CC) $(CPPFLAGS) -c lib_csr.cpp -o $(EXEDIR)/lib_csr_clang.o $(LINKER_DYNAMIC)
+	$(CC) $(CPPFLAGS) -c lobpcg_libcsr_vtune_v1.cpp -o $(EXEDIR)/lobpcg_libcsr_vtune_v1_clang.o $(LINKER_DYNAMIC)
+	$(CC) $(CPPFLAGS) $(EXEDIR)/lib_csr_clang.o $(EXEDIR)/lobpcg_libcsr_vtune_v1_clang.o -o $(EXEDIR)/lobpcg_libcsr_vtune_v1_clang.x $(LINKER_DYNAMIC)
+
+clean:
+	rm $(EXEDIR)/*.x $(EXEDIR)/*.o
