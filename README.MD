@@ -1,5 +1,5 @@
 ### Overview
-This zip file contains the sourcecodes of LOBPCG running on GPU and our tiled SpMM, XY and XTY kernels. 
+This repo contains the sourcecodes of LOBPCG running on GPU and our tiled SpMM, XY and XTY kernels. 
 Description of the contents of each subfolder are as follows:
 
 ### LOPBCG-GPU
